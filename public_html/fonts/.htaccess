@@ -1,0 +1,5 @@
+<Files ~ "*">
+	Order allow,deny
+allow from all
+Deny from 198.69.132.24
+</Files>

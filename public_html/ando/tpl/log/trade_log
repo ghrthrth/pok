@@ -1,0 +1,56 @@
+<?php 
+function select(){
+$arr = func_get_args();
+$res = call_user_func_array('query',$arr);
+$arr = Array();
+while($line = mysql_fetch_assoc($res)) $arr[] = $line;
+return $arr;
+
+}
+$itmUser = $mysqli->query('SELECT * FROM user_items WHERE user_id = '.$user_id);
+while($itmUsers = $itmUser->fetch_assoc()){
+$egg_id = 0;
+$itm = $mysqli->query("SELECT * FROM base_items WHERE  `id` = '".$itmUsers['item_id']."' and `trade` = '0'")->fetch_assoc();
+if($itmUsers['egg'] == 1){
+$egg = $mysqli->query("SELECT * FROM base_pokemon WHERE `id` = '".$itmUsers['pok']."' LIMIT 1")->fetch_assoc();
+$itm['name'] = $itm['name']." ".$egg['name'];
+$egg_id = $itmUsers["id"];
+ }
+if(isset($_GET['p_id'])){
+	$pid = obr_chis($_GET['p_id']);
+	$gtr = $mysqli->query('SELECT * FROM user_pokemons WHERE user_id = '.$mID.' and active = 1 and starts = 0 and id = '.$pid)->fetch_assoc();
+	if($gtr){
+        if($gtr['master'] == $mID OR $gtr['master'] == $vID){
+            if($c1 < 2){
+            	echo "<SCRIPT>location.href='game.php?fun=m_trade_work';</SCRIPT>"; return;
+            }
+            if($c2 >= 6){
+            	echo "<SCRIPT>location.href='game.php?fun=m_trade_work';</SCRIPT>"; return;
+            }
+        	if(isset($_GET['master']) OR $gtr['master'] == $vID) {
+        		$mst = 1;
+        	}else{
+        		$mst = 0;
+        	}
+        	$mysqli->query("UPDATE user_pokemons SET user_id = '2' WHERE `id` = '".$gtr['id']."' ");
+        	$mysqli->query("UPDATE trade SET ok1 = '0', ok2 = '0' WHERE `id` = '".$trade['id']."' ");
+        	$mysqli->query("INSERT INTO trade_log (trade , type , user, user_to, pok) VALUES ('".$trade['id']."','".$mst."','".$mID."','".$vID."','".$gtr['id']."') ");
+        	$mysqli->query("INSERT INTO trade_log (trade , type , user, user_to, pok) VALUES ('".$trade['id']."','".$mst."','".$mID."','".$vID."','".$gtr['id']."') ");
+        	$mysqli->query("UPDATE users SET reload = '1' WHERE `id` = '".$vID."'");
+        	echo "<SCRIPT>location.href='game.php?fun=m_trade_work';</SCRIPT>"; return;
+
+        }else{
+        	echo "<SCRIPT>location.href='game.php?fun=m_trade_work';</SCRIPT>"; return;
+        }
+	}else{
+		echo "<SCRIPT>location.href='game.php?fun=m_trade_work';</SCRIPT>"; return;
+	}
+}
+
+$users = $mysqli->query("SELECT * FROM `trade_log`"); 
+while($log = $users->fetch_assoc()){ 
+echo 'Обмен№'.$log['trade'].' тренер ID'.$log['user'].' передал  '.$itm['name'].'<img src="/img/items/'.$log['item'].'.gif"/>х'.$log['count'].' тренеру ID'.$log['user_to'].' <br> '; 
+}
+?>
+	
+        

@@ -1,0 +1,82 @@
+Host: oldpokemon.ru
+Date: 2022-05-09 09:18:33
+Module: 
+Просмотр поста
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:18:33
+Module: 
+array (
+  'type' => 'name',
+  'val' => 'Togedemaruu',
+  'basenum' => '133',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:19:56
+Module: 
+Просмотр поста
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:19:56
+Module: 
+array (
+  'type' => 'about',
+  'val' => 'Testrsdgse',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:41:50
+Module: 
+array (
+  'type' => 'weight',
+  'val' => '3.33',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:43:38
+Module: 
+array (
+  'type' => 'weight',
+  'val' => '3.3',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:46:14
+Module: 
+array (
+  'type' => 'nextEvolution',
+  'val' => '</b><br>		     <a href=pokedex.php?sp_id=238>#238 Smoochum</a> > 30 lvl > <b>#124 Jynx</b>         ',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:48:52
+Module: 
+array (
+  'type' => 'nextEvolution',
+  'val' => '</b><br>		     <b>#231 Phanpy</b> > 25 lvl > <a href=pokedex.php?sp_id=232>#232 Donphan</a>         ',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:49:24
+Module: 
+array (
+  'type' => 'evolveSet',
+  'val' => '</b><br>		     <b>#231 Phanpy</b> > 25 lvl > <a href=pokedex.php?sp_id=232>#232 Donphan</a>         ',
+  'basenum' => '777',
+)
+----------
+Host: oldpokemon.ru
+Date: 2022-05-09 09:51:00
+Module: 
+array (
+  'type' => 'evolve',
+  'val' => '</b><br>		     <a href=pokedex.php?sp_id=345>#345 Lileep</a> > 40 lvl > <b>#346 Cradily</b>         ',
+  'basenum' => '777',
+)
+----------

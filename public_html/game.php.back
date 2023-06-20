@@ -1,0 +1,207 @@
+<?php
+session_start();
+header("Cache-control: public");
+header("Expires: " . gmdate("D, d M Y H:i:s", time() + 60*60*24) . " GMT");
+header('Content-Type: text/html; charset=utf-8');
+include ('ando/bsqldate/dbconsql.php');
+
+if (isset($_GET['fun']) && (preg_match("|^[a-z_-]+$|i",$_GET['fun']))) {
+    $go = escapeMe($_GET['fun']);
+    #Проверка на активность сессии
+    if (empty($_SESSION['user_id'])) {
+        echo "<script>location.href='..';</script>";
+        return;
+    }
+    include('ando/functions/game.functions.php');
+
+    #Выход
+    if ($go == 'logout') {
+        echo '<title>OldPokemon > Выход</title>';
+        $mysqli->query("UPDATE users SET online = 0 WHERE id = ".escapeMe($_SESSION['user_id']));
+        unset($_SESSION['user_id']);
+        echo "<script>location.href='..';</script>";
+    } else # Полицейский участок, только для полицейских(прости)
+        if ($go == 'police') {
+            $title = 'OldPokemon > Полицейский участок';
+            error_reporting(-1);
+            include __DIR__."/ando/tpl/shapka.php";
+            include "ando/tpl/police.php";
+    } else #Стартовая страницы
+        if ($go == 'start') {
+        $title = 'OldPokemon > Приветствие';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/start.php";
+    } else #Мир
+        if ($go == 'map') {
+        include "ando/tpl/map.php";
+        } else #Мир
+        if ($go == 'sex') {
+        include "ando/tpl/pok_locations.php";
+    } else #Фрейм с онлайн листом юзеров
+        if ($go == 'm_online') {
+        include "ando/tpl/online.php";
+    } else #Фрейм с основным миром
+        if ($go == 'm_location') {
+            if ($user['status'] == 'talking')
+            {
+              $mysqli->query("UPDATE users SET status='free' WHERE id = ".$user['id']);
+            }
+        include "ando/tpl/loc.php";
+    } else #Фрейм с чатом
+        if ($go == 'chat') {
+        include "ando/tpl/chat.php";
+    } else #Фрейм с чатом
+        if ($go == 'onl_log') {
+        include "ando/tpl/onllog.php";
+    } else #Фрейм с чатом
+        if ($go == 'chat_log') {
+        include "ando/tpl/chatlog.php";
+    } else #Нижний фрейм
+        if ($go == 'm_input') {
+        include "ando/tpl/input.php";
+    } else #Фрейм работы с нпс
+        if ($go == 'm_npc') {
+        $npcid = trim(htmlspecialchars($_GET['npc_id']));
+        if ($npcid == 8) {
+            if ($user['status'] == 'free')
+            {
+              $mysqli->query("UPDATE users SET status='talking' WHERE id = ".$user['id']);
+            }
+            include "ando/tpl/npc.php";
+        } else {
+            $iNPC = $mysqli->query("SELECT * FROM base_npc WHERE `id` = '".$npcid."'")->fetch_assoc();
+            if ($user['location'] == $iNPC['location']) {
+                if ($user['status'] == 'free')
+                {
+                  $mysqli->query("UPDATE users SET status='talking' WHERE id = ".$user['id']);
+                }
+                include "ando/tpl/npc.php";
+            } else {
+                echo "<script>location.href='..';</script>";
+                return;
+            }
+        }
+    } else #Вкладка с покемонами
+        if ($go == 'pokemons') {
+        $count_pok = $mysqli->query('SELECT  COUNT(DISTINCT basenum) as counts FROM user_pokemons WHERE user_id = '.escapeMe($_SESSION['user_id']))->fetch_assoc();
+        $mysqli->query('UPDATE users SET count_pok = '.$count_pok['counts'].' WHERE id = '.escapeMe($_SESSION['user_id']));
+        $count_shine_pok = $mysqli->query('SELECT  COUNT(DISTINCT basenum) as counts FROM user_pokemons WHERE type="shine" AND user_id = '.escapeMe($_SESSION['user_id']))->fetch_assoc();
+        $mysqli->query('UPDATE users SET count_shine_pok = '.$count_shine_pok['counts'].' WHERE id = '.escapeMe($_SESSION['user_id']));
+        $title = 'OldPokemon > Покемоны';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/pokemons.php";
+    } else #Фрейм для обработки запросов
+        if ($go == 'p_base') {
+        include "ando/tpl/p_base.php";
+    } else #Файл изучения атак
+        if ($go == 'p_aa') {
+        include "ando/tpl/p_aa.php";
+    } else #Файл инвентаря
+        if ($go == 'items') {
+        include "ando/tpl/items.php";
+    } else #Функции инвентаря
+        if ($go == 'use_item') {
+        include "ando/functions/items.functions.php";
+    } else #Файл списка тренеров
+        if ($go == 'tren') {
+        $title = 'OldPokemon > Тренеры';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/treners.php";
+        } else #Лото
+        if ($go == 'lotery') {
+        $title = 'OldPokemon > Лотерея';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/lotery.php";
+    } else #Файл тренеркарты
+        if ($go == 'treninf') {
+        include "ando/tpl/tren_card.php";
+    } else #Файл боя
+        if ($go == 'fight') {
+        // http://evering.beget.tech/game.php?fun=fight&type=atk&atnum=1
+        include "ando/tpl/battle.php";
+    } else #Файл боя
+        if ($go == 'view_fight') {
+        include "ando/tpl/viewfight.php";
+    } else #Файл профиля
+        if ($go == 'profile') {
+        $title = 'OldPokemon > Профиль';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/profile.php";
+    } else #Файл профиля
+    if ($go == 'daily') {
+    $title = 'OldPokemon > Бонус';
+    include "ando/tpl/shapka.php";
+    include "ando/tpl/daily.php";
+    } else #Файл жемчужного магазина
+        if ($go == 'pearljam') {
+        $title = 'OldPokemon > Жемчужный магазин';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/pearljam.php";
+    } else #Файл списка кланов
+        if ($go == 'clans') {
+        $title = 'OldPokemon > Кланы';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/clans.php";
+    } else #Файл просмотра клана
+        if ($go == 'claninf') {
+        include "ando/tpl/clan_card.php";
+    } else #Файл ловли покемонов на локации
+        if ($go == 'poklocation') {
+        include "ando/tpl/poklocation.php";
+    } else #Файл обмена
+        if ($go == 'm_trade_work') {
+        include "ando/tpl/trade.php";
+    } else #Файл обмена
+        if ($go == 'm_trade_log') {
+        include "ando/tpl/trade_log.php";
+    } else
+        if ($go == 'm_breed') {
+        include "ando/tpl/breed.php";
+ //    }else
+//        if($go == 'bonus'){
+  //      $title = 'OldPokemon > Черный рынок'; 
+    //    include "ando/tpl/shapka.php";
+      //  include "ando/tpl/bonus.php";
+    } else
+        if ($go == 'buy') {
+        $title = 'OldPokemon > Покупка жемчуга';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/buy.php";
+    } else
+        if ($go == 'pokeinf') {
+        include "ando/tpl/pok_inf.php";
+    } else
+        if ($go == 'dexform') {
+        include "ando/tpl/dexform.php";
+    } else
+        if ($go == 'locform') {
+        include "ando/tpl/locform.php";
+    } else
+        if ($go == 'zp') {
+        include "ando/tpl/zp.php";
+    } else #Почта
+        if ($go == 'messages') {
+        $title = 'OldPokemon > Почта';
+        include "ando/tpl/shapka.php";
+        include "ando/tpl/sends.php";
+    } else #Админ панель
+        if ($go == 'admin') {
+        include "admin/index.php";
+    } else #Создание клана через клан ордер
+        if ($go == 'clan_order') {
+        if (isset($_SESSION['clan_order'])) {
+            $title = 'OldPokemon > Создание клана';
+            include "ando/tpl/clan_order.php";
+        } else {
+            echo "<script>alert('Ошибка при создании клана. Обратитесь к Администрации!')</script>";
+            echo "<script>window.location.href='..';</script>";
+            exit;
+        }
+
+    } else {
+        echo "<script>location.href='..';</script>";
+    }
+} else {
+    echo "<script>location.href='..';</script>";
+}
+?>
